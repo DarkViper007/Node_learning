@@ -1,38 +1,26 @@
-function delay(ms = 200) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export function createUsersRepository() {
-    const users = [
-        { id: 1, name: 'User 1' },
-        { id: 2, name: 'User 2' },
-    ];
+export function createMockUsersRepository() {
+    const users = [];
 
     return {
         async findAll() {
-            await delay();
             return users;
         },
 
         async findById(id) {
-            await delay();
             return users.find((u) => u.id === id) || null;
         },
 
         async findByName(name) {
-            await delay();
             const needle = name.trim().toLowerCase();
             return users.find((u) => u.name.trim().toLowerCase() === needle) || null;
         },
 
         async create(user) {
-            await delay();
             users.push(user);
             return user;
         },
 
         async removeById(id) {
-            await delay();
             const idx = users.findIndex((u) => u.id === id);
             if (idx === -1) return false;
             users.splice(idx, 1);
@@ -40,11 +28,7 @@ export function createUsersRepository() {
         },
 
         getNextId() {
-            // Keep synchronous: it's CPU-local and doesn't need delay
             return users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
         },
     };
 }
-
-
-

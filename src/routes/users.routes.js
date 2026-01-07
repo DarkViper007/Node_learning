@@ -1,14 +1,15 @@
 import { asyncHandler } from '../middlewares/asyncHandler.js';
-import { requireApiKey } from '../middlewares/requireApiKey.js';
-import { requireJson } from '../middlewares/requireJson.js';
-import { getUsers, getUserById, createUser, deleteUser } from '../controllers/users.controller.js';
+import {createUserLimiter} from "../middlewares/rateLimiters.js";
 
-export function addUserRoutes(app) {
-    app.get('/users', asyncHandler(getUsers));
-    app.get('/users/:id', asyncHandler(getUserById));
-    app.post('/users', requireApiKey, requireJson, asyncHandler(createUser));
-    app.delete('/users/:id', asyncHandler(deleteUser));
+export function addUserRoutes(app, deps) {
+    const { usersController, requireApiKeyMw, requireJsonMw } = deps;
+
+    app.get('/users', asyncHandler(usersController.getUsers));
+    app.get('/users/:id', asyncHandler(usersController.getUserById));
+    app.post('/users',createUserLimiter, requireApiKeyMw, requireJsonMw, asyncHandler(usersController.createUser));
+    app.delete('/users/:id', asyncHandler(usersController.deleteUser));
 }
+
 
 
 
