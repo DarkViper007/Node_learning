@@ -6,6 +6,8 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(3000),
     APP_NAME: z.string().default('node-api'),
     API_KEY: z.string().default('secret'),
+    CORS_ORIGINS: z.string().default(''),
+    DATABASE_URL: z.string().min(1),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -21,5 +23,13 @@ export const env = {
     port: parsed.data.PORT,
     appName: parsed.data.APP_NAME,
     apiKey: parsed.data.API_KEY,
+    corsOrigins: parsed.data.CORS_ORIGINS
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+    databaseUrl: parsed.data.DATABASE_URL,
 };
 
+if (!env.databaseUrl) {
+    throw new Error('DATABASE_URL is required');
+}

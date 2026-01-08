@@ -24,8 +24,7 @@ export function createUsersService(usersRepo) {
             const exists = await usersRepo.findByName(dto.name);
             if (exists) throw new HttpError(409, 'user with name already exists');
 
-            const user = { id: usersRepo.getNextId(), name: dto.name };
-            return await usersRepo.create(user);
+            return await usersRepo.create({ name: dto.name });
         },
 
         async deleteUser(id) {
