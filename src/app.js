@@ -17,6 +17,10 @@ import helmet from 'helmet';
 import cors from 'cors';
 import {HttpError} from "./errors/httpError.js";
 import debugRoutes from "./routes/debug.routes.js";
+import {buildProductsModule} from "./modules/products.module.js";
+import {addProductRoutes} from "./routes/products.routes.js";
+import {buildOrdersModule} from "./modules/orders.module.js";
+import {addOrderRoutes} from "./routes/orders.routes.js";
 
 export function createApp() {
     const app = express();
@@ -48,6 +52,22 @@ export function createApp() {
     addUserRoutes(app, {
         usersController: usersModule.usersController,
         requireApiKeyMw: requireApiKey(env.apiKey),
+        requireJsonMw: requireJson,
+    });
+
+    const productsModule = buildProductsModule();
+
+    addProductRoutes(app, {
+        productsController: productsModule.productsController,
+        requireJsonMw: requireJson,
+    });
+
+    const ordersModule = buildOrdersModule({
+        usersRepo: usersModule.usersRepo,
+    });
+
+    addOrderRoutes(app, {
+        ordersController: ordersModule.ordersController,
         requireJsonMw: requireJson,
     });
 
